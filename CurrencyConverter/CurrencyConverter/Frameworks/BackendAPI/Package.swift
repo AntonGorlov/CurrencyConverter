@@ -12,11 +12,16 @@ let package = Package(
             name: "BackendAPI",
             targets: ["BackendAPI"]),
     ],
+    dependencies: [
+        .package(url: "https://github.com/Alamofire/Alamofire.git", .upToNextMajor(from: "5.10.2"))
+        // Dependencies declare other packages that this package depends on.
+    ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
         // Targets can depend on other targets in this package and products from dependencies.
         .target(
-            name: "BackendAPI"),
+            name: "BackendAPI",
+            dependencies: ["Alamofire"]),
 
     ]
 )
