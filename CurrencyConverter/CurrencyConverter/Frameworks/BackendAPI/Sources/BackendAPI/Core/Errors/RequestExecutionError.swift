@@ -9,19 +9,19 @@ import Foundation
 
 /// Errors that may occur when executing a request
 public enum RequestExecutionError: Error {
-    /// <#Description#>
+    /// When there's no internet connection
     case networkUnavailable
-    /// <#Description#>
+    /// When the request takes too long
     case timeout
-    /// <#Description#>
+    /// When connection drops mid-request
     case connectionInterrupted
-    /// <#Description#>
+    /// When server returns no data
     case dataIsEmpty
-    /// <#Description#>
+    /// When server returns an error status code
     case httpStatusError(StatusError)
-    /// DecodingError
+    /// When JSON decoding fails
     case serializationError(Error)
-    /// <#Description#>
+    /// For any other unforeseen errors
     case unexpected(Error?)
     
 }
