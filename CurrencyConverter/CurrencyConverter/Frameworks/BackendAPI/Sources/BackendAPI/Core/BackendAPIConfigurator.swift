@@ -16,12 +16,10 @@ public actor BackendAPIConfigurator: Sendable {
     public private(set) var configuration: Configuration?
     
     public func configure(baseURL url: URL) {
-        
         self.configuration = Configuration(baseURL: url)
     }
     
     public func configure(_ configuration: Configuration) {
-        
         self.configuration = configuration
     }
 }

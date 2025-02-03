@@ -8,7 +8,7 @@
 import Foundation
 
 /// Errors that may occur when executing a request
-public enum RequestExecutionError: Error {
+public enum RequestExecutionError: Error, Sendable {
     /// When there's no internet connection
     case networkUnavailable
     /// When the request takes too long

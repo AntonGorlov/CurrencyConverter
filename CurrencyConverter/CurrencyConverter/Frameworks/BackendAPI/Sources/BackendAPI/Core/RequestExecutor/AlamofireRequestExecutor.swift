@@ -10,86 +10,72 @@ import Alamofire
 
 /// This class is a robust and flexible solution for handling network requests in an iOS application using Alamofire.
 /// Uses the Alamofire library to execute network requests. It handles both simple requests (where the response is not decoded) and requests where the response is expected to be a JSON object that can be decoded into a specified Decodable type. The class is designed to work in a concurrent environment, making it suitable for modern Swift concurrency.
-actor AlamofireRequestExecuter: IRequestExecuter {
-    let acceptableStatusCodes = 200..<300
-    let acceptableContentTypes = ["application/json", "application/x-www-form-urlencoded"]
-    
+class AlamofireRequestExecuter: IRequestExecuter {
+    private let acceptableStatusCodes = 200..<300
+    private let acceptableContentTypes = ["application/json", "application/x-www-form-urlencoded"]
+
     init() {
         AF.sessionConfiguration.timeoutIntervalForRequest = 15
         AF.sessionConfiguration.timeoutIntervalForResource = 10
     }
     
-    func execute(_ request: URLRequest,
-                 completion: @escaping @Sendable (Result<Void, RequestExecutionError>) -> Void) async {
+    func execute(_ request: URLRequest) async -> Result<Void, RequestExecutionError> {
         guard Reachability.isConnectedToNetwork() else {
-            completion(.failure(.networkUnavailable))
-            return
+            return .failure(.networkUnavailable)
         }
         
         let statusCodes = acceptableStatusCodes
         let contentTypes = acceptableContentTypes
         
-        let dataRequest = getDataRequest(form: request)
-        
-        dataRequest
-            .validate(statusCode: statusCodes)
-            .validate(contentType: contentTypes)
-            .response { response in
-                if let code = response.response?.statusCode,
-                   statusCodes.contains(code) {
-                    completion(.success(()))
-                } else if let error = response.error {
-                    let executionError = Self.mapError(error)  // Changed to Self.mapError
-                    completion(.failure(executionError))
-                } else {
-                    completion(.failure(.unexpected(nil)))
-                }
-            }
+        do {
+            _ = try await AF.request(request)
+                .validate(statusCode: statusCodes)
+                .validate(contentType: contentTypes)
+                .serializingData()
+                .value
+            return .success(())
+        } catch let error as AFError {
+            return .failure(mapError(error))
+        } catch {
+            return .failure(.unexpected(error))
+        }
     }
     
     func execute<T: Decodable & Sendable>(_ request: URLRequest,
-                                         decoder: JSONDecoder,
-                                         completion: @escaping @Sendable (Result<T, RequestExecutionError>) -> Void) async {
+                                          decoder: JSONDecoder) async -> Result<T, RequestExecutionError> {
         guard Reachability.isConnectedToNetwork() else {
-            completion(.failure(.networkUnavailable))
-            return
+            return .failure(.networkUnavailable)
         }
         
         let statusCodes = acceptableStatusCodes
         let contentTypes = acceptableContentTypes
         
-        let dataRequest = getDataRequest(form: request)
-        
-        dataRequest
-            .validate(statusCode: statusCodes)
-            .validate(contentType: contentTypes)
-            .responseDecodable(of: T.self, decoder: decoder) { response in
-                switch response.result {
-                case .success(let value):
-                    completion(.success(value))
-                case .failure(let error):
-                    let executionError = Self.mapError(error)  // Changed to Self.mapError
-                    completion(.failure(executionError))
-                }
-            }
+        do {
+            let response = try await AF.request(request)
+                .validate(statusCode: statusCodes)
+                .validate(contentType: contentTypes)
+                .serializingDecodable(T.self, decoder: decoder)
+                .value
+            return .success(response)
+        } catch let error as AFError {
+            return .failure(mapError(error))
+        } catch {
+            return .failure(.unexpected(error))
+        }
     }
     
-    // Made static and nonisolated
-    private static nonisolated func mapError(_ error: AFError) -> RequestExecutionError {
+    private func mapError(_ error: AFError) -> RequestExecutionError {
         switch error {
-        case .sessionTaskFailed(let error as URLError) where error.code == .timedOut:
+        case .sessionTaskFailed(let urlError as URLError) where urlError.code == .timedOut:
             return .timeout
-        case .sessionTaskFailed(let error as URLError) where error.code == .networkConnectionLost:
+        case .sessionTaskFailed(let urlError as URLError) where urlError.code == .networkConnectionLost:
             return .connectionInterrupted
         default:
             if let statusCode = error.responseCode {
-                let statusError = StatusError(statusCode)
-                return .httpStatusError(statusError)
-            }
-            else if error.isResponseSerializationError {
+                return .httpStatusError(StatusError(statusCode))
+            } else if error.isResponseSerializationError {
                 return .serializationError(error)
-            }
-            else {
+            } else {
                 return .unexpected(error)
             }
         }
