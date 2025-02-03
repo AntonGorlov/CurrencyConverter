@@ -13,7 +13,6 @@ class CurrencyConverterAPIEndpointsFactory: ICurrencyConverterAPIEndpointsFactor
     private(set) var configuration: Configuration
     
     init() async {
-        
         guard let configuration = await BackendAPIConfigurator.shared.configuration else {
             fatalError(MISS_CONFIG_FATAL_ERROR)
         }
@@ -36,3 +35,4 @@ class CurrencyConverterAPIEndpointsFactory: ICurrencyConverterAPIEndpointsFactor
             .appending(path: "latest")
     }
 }
+

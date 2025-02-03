@@ -11,5 +11,5 @@ import Foundation
 public struct CurrencyConverterRequestData {
     public let fromAmount: Double
     public let fromCurrency: String
-    public let toCurrency: Double
+    public let toCurrency: String
 }

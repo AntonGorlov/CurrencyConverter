@@ -14,7 +14,7 @@ public protocol ICurrencyConverterAPIRequestsFactory {
     /// - Parameter requestData: Containing the details of the conversion request (e.g., fromAmount, fromCurrency, toCurrency).
     /// - Returns: URLRequest
     func buildGetConvertCurrencyRequest(requestData:
-                                        CurrencyConverterRequestData) throws -> URLRequest
+                                        CurrencyConverterRequestData) async throws -> URLRequest
 }
 
 
