@@ -8,7 +8,7 @@
 import Foundation
 
 /// Currency сonverter response data
-public struct CurrencyConverterResponseData: Decodable {
+public struct CurrencyConverterResponseData: Decodable, Sendable {
     public let currency: String
     public let amount: String
 }
