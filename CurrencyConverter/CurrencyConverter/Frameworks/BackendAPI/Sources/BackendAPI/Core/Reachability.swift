@@ -8,8 +8,8 @@
 import Foundation
 import SystemConfiguration
 
+/// Allows you to determine whether the device is connected to the Internet
 public class Reachability {
-    
     public class func isConnectedToNetwork() -> Bool {
         
         var zeroAddress = sockaddr_in(sin_len: 0,
