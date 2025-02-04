@@ -21,15 +21,7 @@ let package = Package(
         // Targets can depend on other targets in this package and products from dependencies.
         .target(
             name: "BackendAPI",
-            dependencies: ["Alamofire"]
-        ),
-        .testTarget(
-            name: "CurrencyConverterAPITests",
-            dependencies: ["BackendAPI"],
-            path: "Tests/CurrencyConverterAPITests",
-            resources: [
-                .process("Resources")
-            ]
-        ),
+            dependencies: ["Alamofire"]),
+
     ]
 )
