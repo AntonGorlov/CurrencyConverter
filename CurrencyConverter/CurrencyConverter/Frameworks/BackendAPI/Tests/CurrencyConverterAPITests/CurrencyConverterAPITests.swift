@@ -8,6 +8,7 @@
 import XCTest
 @testable import BackendAPI
 
+// If you want to use a real request to the backend, and not a mock response (Which is not desirable, since tests should be fast, isolated and repeatable, but with a real request this will not work) Then do not use the MockRequestExecuter class in tests
 final class CurrencyConverterAPITests: XCTestCase {
     var sut: CurrencyConverterAPIController!
     var mockRequestBuilder: MockCurrencyConverterAPIRequestsFactory!
