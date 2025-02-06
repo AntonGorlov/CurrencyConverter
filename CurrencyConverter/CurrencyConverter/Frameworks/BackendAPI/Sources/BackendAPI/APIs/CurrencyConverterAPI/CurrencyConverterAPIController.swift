@@ -8,7 +8,7 @@
 import Foundation
 
 public class CurrencyConverterAPIController: AnyAPIContoller, ICurrencyConverterAPI {
-    private var requestsBuilder: ICurrencyConverterAPIRequestsFactory
+    public var requestsBuilder: ICurrencyConverterAPIRequestsFactory
     
     public init(configuration: IConfiguration) {
         self.requestsBuilder = CurrencyConverterAPIRequestsFactory(configuration)

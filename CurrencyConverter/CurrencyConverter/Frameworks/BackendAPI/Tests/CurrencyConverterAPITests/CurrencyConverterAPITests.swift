@@ -11,14 +11,17 @@ import XCTest
 // If you want to use a real request to the backend, and not a mock response (Which is not desirable, since tests should be fast, isolated and repeatable, but with a real request this will not work) Then do not use the MockRequestExecuter class in tests
 final class CurrencyConverterAPITests: XCTestCase {
     var sut: CurrencyConverterAPIController!
+    var mockConfiguration: MockConfiguration!
     var mockRequestBuilder: MockCurrencyConverterAPIRequestsFactory!
     var mockRequestExecuter: MockRequestExecuter!
     
     override func setUp() {
         super.setUp()
-        mockRequestBuilder = MockCurrencyConverterAPIRequestsFactory()
+        mockConfiguration = MockConfiguration()
         mockRequestExecuter = MockRequestExecuter()
-        sut = CurrencyConverterAPIController(mockRequestBuilder)
+        mockRequestBuilder = MockCurrencyConverterAPIRequestsFactory(configuration: mockConfiguration)
+        sut = CurrencyConverterAPIController(configuration: mockConfiguration)
+        sut.requestsBuilder = mockRequestBuilder
         sut.requestExecuter = mockRequestExecuter
     }
     
@@ -26,6 +29,7 @@ final class CurrencyConverterAPITests: XCTestCase {
         sut = nil
         mockRequestBuilder = nil
         mockRequestExecuter = nil
+        mockConfiguration = nil
         super.tearDown()
     }
     
@@ -68,6 +72,7 @@ final class CurrencyConverterAPITests: XCTestCase {
         
         // When
         let result = await sut.сonvertСurrency(requestData)
+        debugPrint("Local response: \(result)")
         
         // Then
         switch result {
@@ -242,9 +247,19 @@ final class CurrencyConverterAPITests: XCTestCase {
 
 // MARK: - Mock Dependencies
 
+class MockConfiguration: IConfiguration {
+    var baseURL: URL = URL(string: "https://myApi.testExample.com")!
+    var commonHeaders: [String : String] = ["Content-Type": "application/json"]
+}
+
 class MockCurrencyConverterAPIRequestsFactory: ICurrencyConverterAPIRequestsFactory {
+    var configuration: IConfiguration
     var mockConvertCurrencyResult: Result<CurrencyConverterResponseData, RequestExecutionError>?
     var mockBuildError: RequestBuildingError?
+    
+    init(configuration: IConfiguration) {
+        self.configuration = configuration
+    }
     
     func buildGetConvertCurrencyRequest(requestData: CurrencyConverterRequestData) async throws -> URLRequest {
         if let error = mockBuildError {
