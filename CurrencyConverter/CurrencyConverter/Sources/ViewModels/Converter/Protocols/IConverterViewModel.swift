@@ -12,7 +12,7 @@ import Foundation
 protocol IConverterViewModel {
     var apiService: ICurrencyConverterService { get }
     
-    init(apiService: ICurrencyConverterService)
+    init(apiService: ICurrencyConverterService, currencyProvider: ICurrencyProvider)
     
     /// Convert method
     /// - Parameters:
@@ -22,4 +22,8 @@ protocol IConverterViewModel {
     func convertCurrencyAction(amount: Double,
                                from: String,
                                to: String) async
+    
+    /// Get all Currencies from CurrenciesProvider
+    /// - Returns: [Currency]
+    func getAllCurrencies() -> [Currency]
 }

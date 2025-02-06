@@ -10,17 +10,19 @@ import BackendAPI
 
 class CurrencyConverterService: ICurrencyConverterService {
     private let apiController: ICurrencyConverterAPI
-    private let currencies = ["JPY","EUR","USD","GBP"]
+    private let currencyProvider: ICurrencyProvider
     
-    init(apiController: ICurrencyConverterAPI) {
+    init(apiController: ICurrencyConverterAPI,
+         currencyProvider: ICurrencyProvider) {
         self.apiController = apiController
+        self.currencyProvider = currencyProvider
     }
     
     func convertCurrency(amount: Double,
                          from: String,
-                         to: String) async throws -> CurrencyConverterResponseData {
+                         to: String) async throws -> ConverterData {
         
-        try validateInput(amount: amount, from: from, to: to)
+        try validationInput(amount: amount, from: from, to: to)
         
         let requestData = CurrencyConverterRequestData(fromAmount: amount, fromCurrency: from, toCurrency: to)
         
@@ -31,25 +33,25 @@ class CurrencyConverterService: ICurrencyConverterService {
             guard let _ = Decimal(string: response.amount) else {
                 throw ConverterError.conversionFailed("Invalid response format")
             }
-            return response
+            return mapTo(response)
         case .failure(let error):
             throw try errorsAPIHandler(error)
         }
     }
     
-    func validateInput(amount: Double,
-                       from: String,
-                       to: String) throws {
+    func validationInput(amount: Double,
+                         from: String,
+                         to: String) throws {
         
         guard amount > 0 else {
             throw ConverterError.invalidAmount("Amount must be greater than 0")
         }
         
-        guard currencies.contains(from.uppercased()) else {
+        guard currencyProvider.isSupported(from) else {
             throw ConverterError.invalidCurrency(from)
         }
         
-        guard currencies.contains(to.uppercased()) else {
+        guard currencyProvider.isSupported(to) else {
             throw ConverterError.invalidCurrency(to)
         }
     }
@@ -93,5 +95,9 @@ class CurrencyConverterService: ICurrencyConverterService {
         case .unexpected(let error):
             throw ConverterError.serverError("Unexpected error: \(error.localizedDescription)")
         }
+    }
+    
+    private func mapTo(_ response: CurrencyConverterResponseData) -> ConverterData {
+        return ConverterData(amount: response.amount, currency: response.currency)
     }
 }

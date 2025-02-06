@@ -16,17 +16,17 @@ protocol ICurrencyConverterService {
     ///   - amount: Amount of currency
     ///   - from: The currency to convert from
     ///   - to: The currency to convert to
-    /// - Returns: CurrencyConverterResponseData
+    /// - Returns: ConverterData
     func convertCurrency(amount: Double,
                          from: String,
-                         to: String) async throws -> CurrencyConverterResponseData
+                         to: String) async throws -> ConverterData
     
     /// Validate input data. Here some business rules
     /// - Parameters:
     ///   - amount: Double
     ///   - from: String
     ///   - to: String
-    func validateInput(amount: Double,
-                       from: String,
-                       to: String) throws
+    func validationInput(amount: Double,
+                         from: String,
+                         to: String) throws
 }

@@ -16,6 +16,7 @@ enum ConverterError: LocalizedError {
     case serverError(String)
     case noInternetConnection
     case dataIsEmpty
+    case unexpected(String)
     
     var errorDescription: String? {
         switch self {
@@ -35,6 +36,8 @@ enum ConverterError: LocalizedError {
             return "No internet connection. Check your connection."
         case .dataIsEmpty:
             return "Your request was not processed, Empty data was received." 
+        case .unexpected(let message):
+            return "Something went wrong: \(message)"
         }
     }
 }
