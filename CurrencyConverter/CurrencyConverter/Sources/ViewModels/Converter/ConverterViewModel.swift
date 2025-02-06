@@ -52,9 +52,12 @@ class ConverterViewModel: IConverterViewModel {
     }
     
     private func automaticAPIRefresh() {
+        guard let lastConvert = self.lastCurrencyConversion else {
+            return
+        }
         conversionTimer = Timer.scheduledTimer(withTimeInterval: 10.0, repeats: true) { [weak self] _ in
-            guard let self = self,
-                  let lastConvert = self.lastCurrencyConversion else { return }
+            guard let self = self
+                else { return }
             
             Task {
                 await self.convertCurrencyAction(
