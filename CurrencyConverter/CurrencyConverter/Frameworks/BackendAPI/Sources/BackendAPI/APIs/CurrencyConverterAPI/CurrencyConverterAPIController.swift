@@ -10,8 +10,8 @@ import Foundation
 public class CurrencyConverterAPIController: AnyAPIContoller, ICurrencyConverterAPI {
     private var requestsBuilder: ICurrencyConverterAPIRequestsFactory
     
-    public init(_ requestBuilder: ICurrencyConverterAPIRequestsFactory) {
-        self.requestsBuilder = requestBuilder
+    public init(configuration: IConfiguration) {
+        self.requestsBuilder = CurrencyConverterAPIRequestsFactory(configuration)
     }
     
     public func сonvertСurrency(_ requestData: CurrencyConverterRequestData) async -> GetCurrencyConverterResult {

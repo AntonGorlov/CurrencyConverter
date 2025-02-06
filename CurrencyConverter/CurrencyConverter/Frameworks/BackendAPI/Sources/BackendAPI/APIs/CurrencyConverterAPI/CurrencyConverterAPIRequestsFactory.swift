@@ -9,21 +9,21 @@ import Foundation
 import Alamofire
 
 /// The CurrencyConverterAPIRequestsFactory class is responsible for creating URLRequest objects for currency conversion API requests. It conforms to the ICurrencyConverterAPIRequestsFactory protocol, ensuring a consistent interface for constructing network requests.
-/// This class acts as a factory for URLRequest objects, encapsulating the logic for building requests based on input data (CurrencyConverterRequestData) and configuration (BackendAPIConfigurator).
+/// 
+/// This class acts as a factory for URLRequest objects, encapsulating the logic for building requests based on input data (CurrencyConverterRequestData) and configuration (IConfigurator).
 class CurrencyConverterAPIRequestsFactory: ICurrencyConverterAPIRequestsFactory {
     var endpointsBuilder: ICurrencyConverterAPIEndpointsFactory
+    private(set) var configuration: IConfiguration
     
-    init() async {
-        endpointsBuilder = await CurrencyConverterAPIEndpointsFactory()
+    init(_ configuration: IConfiguration) {
+        self.configuration = configuration
+        endpointsBuilder = CurrencyConverterAPIEndpointsFactory(configuration: configuration)
     }
     
     func buildGetConvertCurrencyRequest(requestData:
                                         CurrencyConverterRequestData) async throws -> URLRequest {
         do {
-            guard let configuration = await BackendAPIConfigurator.shared.configuration else {
-                
-                fatalError(MISS_CONFIG_FATAL_ERROR)
-            }
+            
             let endpoint = endpointsBuilder.getConvertCurrencyRequestURL(fromAmount: requestData.fromAmount,
                                                                          fromCurrency: requestData.fromCurrency,
                                                                          toCurrency: requestData.toCurrency)

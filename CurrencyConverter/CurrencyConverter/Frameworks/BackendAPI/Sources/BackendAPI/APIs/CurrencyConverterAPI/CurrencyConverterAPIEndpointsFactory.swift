@@ -8,15 +8,12 @@
 import Foundation
 
 /// The CurrencyConverterAPIEndpointsFactory class is responsible for creating URLs for currency conversion API requests. It adheres to the ICurrencyConverterAPIEndpointsFactory protocol, ensuring a consistent interface for generating API endpoints.
-/// This class is designed to work with a backend configuration (provided by BackendAPIConfigurator) and dynamically constructs URLs based on input parameters such as fromAmount, fromCurrency, and toCurrency.
+///
+/// This class is designed to work with a backend configuration (provided by IConfigurator) and dynamically constructs URLs based on input parameters such as fromAmount, fromCurrency, and toCurrency.
 class CurrencyConverterAPIEndpointsFactory: ICurrencyConverterAPIEndpointsFactory {
-    private(set) var configuration: Configuration
+    private(set) var configuration: IConfiguration
     
-    init() async {
-        guard let configuration = await BackendAPIConfigurator.shared.configuration else {
-            fatalError(MISS_CONFIG_FATAL_ERROR)
-        }
-        
+    required init(configuration: IConfiguration) {
         self.configuration = configuration
     }
     

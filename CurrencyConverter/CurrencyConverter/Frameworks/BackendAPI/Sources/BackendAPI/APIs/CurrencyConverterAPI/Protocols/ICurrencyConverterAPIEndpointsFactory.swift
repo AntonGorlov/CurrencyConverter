@@ -10,6 +10,11 @@ import Foundation
 /// A protocol that defines the interface for generating currency conversion API endpoints.
 public protocol ICurrencyConverterAPIEndpointsFactory {
     
+    /// Providing configuration
+    var configuration: IConfiguration { get }
+    
+    init(configuration: IConfiguration)
+    
     ///  Constructs a URL for a currency conversion request based on the provided parameters.
     /// - Parameters:
     ///   - fromAmount: The amount to convert (Double)
