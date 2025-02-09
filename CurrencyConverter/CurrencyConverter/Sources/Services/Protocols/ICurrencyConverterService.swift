@@ -21,12 +21,12 @@ protocol ICurrencyConverterService {
                          from: String,
                          to: String) async throws -> ConverterData
     
-    /// Validate input data. Here some business rules
-    /// - Parameters:
-    ///   - amount: Double
-    ///   - from: String
-    ///   - to: String
-    func validationInput(amount: Double,
-                         from: String,
-                         to: String) throws
+//    /// Validate input data. Here some business rules
+//    /// - Parameters:
+//    ///   - amount: Double
+//    ///   - from: String
+//    ///   - to: String
+//    func validationInput(amount: Double,
+//                         from: String,
+//                         to: String) throws
 }

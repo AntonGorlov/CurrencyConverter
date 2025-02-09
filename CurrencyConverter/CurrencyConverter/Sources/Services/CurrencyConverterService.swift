@@ -21,10 +21,9 @@ class CurrencyConverterService: ICurrencyConverterService {
     func convertCurrency(amount: Double,
                          from: String,
                          to: String) async throws -> ConverterData {
-        
-        try validationInput(amount: amount, from: from, to: to)
-        
-        let requestData = CurrencyConverterRequestData(fromAmount: amount, fromCurrency: from, toCurrency: to)
+        let requestData = CurrencyConverterRequestData(fromAmount: amount,
+                                                       fromCurrency: from,
+                                                       toCurrency: to)
         
         let result = await apiController.сonvertСurrency(requestData)
         
@@ -36,23 +35,6 @@ class CurrencyConverterService: ICurrencyConverterService {
             return mapTo(response)
         case .failure(let error):
             throw try errorsAPIHandler(error)
-        }
-    }
-    
-    func validationInput(amount: Double,
-                         from: String,
-                         to: String) throws {
-        
-        guard amount > 0 else {
-            throw ConverterError.invalidAmount("Amount must be greater than 0")
-        }
-        
-        guard currencyProvider.isSupported(from) else {
-            throw ConverterError.invalidCurrency(from)
-        }
-        
-        guard currencyProvider.isSupported(to) else {
-            throw ConverterError.invalidCurrency(to)
         }
     }
     
