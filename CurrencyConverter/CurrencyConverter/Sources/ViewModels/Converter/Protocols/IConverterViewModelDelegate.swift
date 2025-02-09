@@ -12,5 +12,5 @@ protocol IConverterViewModelDelegate: AnyObject {
     func startLoading()
     func finishLoading()
     func receiveError(_ error: ConverterError)
-    func updateConvertValues(_ result: ConverterData)
+    func convertedAmount(_ result: ConverterData)
 }
