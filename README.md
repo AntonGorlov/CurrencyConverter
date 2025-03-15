@@ -1,4 +1,6 @@
 # CurrencyConverter
+This task from Paysera company.
+
 Description:
 Online currency converter. allows users to convert currencies using real-time exchange rates
 
